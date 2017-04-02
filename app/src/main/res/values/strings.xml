@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Todo App</string>
+
+
+    <string name="action_settings">Settings</string>
+
+    <string name="prirority_high">High</string>
+    <string name="priority_medium">Medium</string>
+    <string name="priority_low">Low</string>
+    <string name="title_activity_list">ListActivity</string>
+</resources>

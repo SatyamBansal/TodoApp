@@ -1,0 +1,113 @@
+package com.example.satyam.todoapp;
+
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
+
+import com.example.satyam.todoapp.data.TaskContract;
+import com.example.satyam.todoapp.data.TaskDbHelper;
+
+public class DefaultListActivity extends AppCompatActivity implements TaskAdapter.TaskClickListener {
+
+
+    private TaskDbHelper mDbHelper;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_default_list);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(DefaultListActivity.this, EditorActivity.class);
+                i.putExtra("listName", getIntent().getStringExtra("listName"));
+                startActivity(i);
+            }
+        });
+
+        mDbHelper = new TaskDbHelper(this);
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(TaskContract.TaskEntry.COLUMN_TODO, "Job");
+        values.put(TaskContract.TaskEntry.COLUMN_PRIORITY, 1);
+        values.put(TaskContract.TaskEntry.COLUMN_DUE_DATE, "today");
+        values.put(TaskContract.TaskEntry.COLUMN_DUE_TIME, "RightNow");
+
+//        for(int i =0;i<5;i++){
+//
+//            db.insert(TaskContract.TaskEntry.TABLE_NAME,null,values);
+//
+//        }
+
+        String[] selectionArgs = new String[]{getIntent().getStringExtra("listName")};
+
+        Log.i("DefaulActivity.java", selectionArgs[0]);
+
+        Cursor cursor = getContentResolver().query(TaskContract.TaskEntry.CONTENT_URI_TASK, null, TaskContract.TaskEntry.COLUMN_LIST_NAME + "=?", selectionArgs, null);
+
+        Cursor cursor2 = getContentResolver().query(ContentUris.withAppendedId(TaskContract.TaskEntry.CONTENT_URI_TASK, 5), null, null, null, null, null);
+
+        cursor2.moveToNext();
+
+
+        if (cursor.getCount() != 0)
+            while (cursor.moveToNext()) {
+                Log.i("****", "*************");
+                Log.i("Values", cursor.getString(cursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_TODO)));
+            }
+
+        RecyclerView taskRecyclerView = (RecyclerView) findViewById(R.id.task_recyclerView);
+        TaskAdapter adapter = new TaskAdapter(this, this);
+
+        taskRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        taskRecyclerView.setAdapter(adapter);
+        adapter.swapCursor(cursor);
+
+
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_default_list, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void OnTaskClick() {
+        Toast.makeText(this, "Clicked", Toast.LENGTH_SHORT).show();
+    }
+}
