@@ -23,7 +23,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TodoViewHolder
     TaskClickListener mListener;
 
     public interface TaskClickListener {
-        public void OnTaskClick();
+        public void OnTaskClick(View itemView);
     }
 
     public TaskAdapter(Context context, TaskClickListener listener) {
@@ -45,6 +45,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TodoViewHolder
         mCursor.moveToPosition(position);
 
         holder.todoView.setText(mCursor.getString(mCursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_TODO)));
+        holder.itemView.setTag(mCursor.getInt(mCursor.getColumnIndex(TaskContract.TaskEntry._ID)));
 
 
     }
@@ -67,7 +68,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TodoViewHolder
 
         @Override
         public void onClick(View v) {
-            mListener.OnTaskClick();
+            mListener.OnTaskClick(itemView);
 
 
         }

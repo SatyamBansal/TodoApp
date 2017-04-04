@@ -79,6 +79,8 @@ public class DefaultListActivity extends AppCompatActivity implements TaskAdapte
         taskRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         taskRecyclerView.setAdapter(adapter);
         adapter.swapCursor(cursor);
+        cursor.close();
+        cursor2.close();
 
 
     }
@@ -107,7 +109,8 @@ public class DefaultListActivity extends AppCompatActivity implements TaskAdapte
     }
 
     @Override
-    public void OnTaskClick() {
-        Toast.makeText(this, "Clicked", Toast.LENGTH_SHORT).show();
+    public void OnTaskClick(View view) {
+       int tag = (int)view.getTag();
+        Toast.makeText(this, "id = "+ tag, Toast.LENGTH_SHORT).show();
     }
 }
