@@ -4,12 +4,10 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 import com.example.satyam.todoapp.services.ReminderNotificationService;
 
-/**
- * Created by satyam on 20/3/17.
- */
 
 // handle Redminders for todo tasks
 
@@ -40,8 +38,10 @@ public final class AlarmUtils {
 ////        calendar.set(Calendar.DAY_OF_MONTH,dayOfMonth);
 ////        calendar.set(Calendar.MONTH,month);
 ////        calendar.set(Calendar.YEAR,year);
-
-        alarmMgr.set(AlarmManager.RTC_WAKEUP, timeInMilis, alarmIntent);
+        if(Build.VERSION.SDK_INT>19)
+        alarmMgr.setExact(AlarmManager.RTC_WAKEUP, timeInMilis, alarmIntent);
+        else
+            alarmMgr.set(AlarmManager.RTC_WAKEUP, timeInMilis, alarmIntent);
 
 
     }

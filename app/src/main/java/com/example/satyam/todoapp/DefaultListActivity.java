@@ -7,6 +7,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,10 +23,12 @@ import android.widget.Toast;
 import com.example.satyam.todoapp.data.TaskContract;
 import com.example.satyam.todoapp.data.TaskDbHelper;
 
-public class DefaultListActivity extends AppCompatActivity implements TaskAdapter.TaskClickListener {
+public class DefaultListActivity extends AppCompatActivity implements TaskAdapter.TaskClickListener , LoaderManager.LoaderCallbacks<Cursor> {
 
 
     private TaskDbHelper mDbHelper;
+    private String[] mSelectionArgs;
+    TaskAdapter mTaskAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,30 +61,29 @@ public class DefaultListActivity extends AppCompatActivity implements TaskAdapte
 //
 //        }
 
-        String[] selectionArgs = new String[]{getIntent().getStringExtra("listName")};
+        mSelectionArgs = new String[]{getIntent().getStringExtra("listName")};
 
-        Log.i("DefaulActivity.java", selectionArgs[0]);
+        Log.i("DefaulActivity.java", mSelectionArgs[0]);
 
-        Cursor cursor = getContentResolver().query(TaskContract.TaskEntry.CONTENT_URI_TASK, null, TaskContract.TaskEntry.COLUMN_LIST_NAME + "=?", selectionArgs, null);
+//        Cursor cursor = getContentResolver().query(TaskContract.TaskEntry.CONTENT_URI_TASK, null, TaskContract.TaskEntry.COLUMN_LIST_NAME + "=?", selectionArgs, null);
 
         Cursor cursor2 = getContentResolver().query(ContentUris.withAppendedId(TaskContract.TaskEntry.CONTENT_URI_TASK, 5), null, null, null, null, null);
 
         cursor2.moveToNext();
 
 
-        if (cursor.getCount() != 0)
-            while (cursor.moveToNext()) {
-                Log.i("****", "*************");
-                Log.i("Values", cursor.getString(cursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_TODO)));
-            }
+//        if (cursor.getCount() != 0)
+//            while (cursor.moveToNext()) {
+//                Log.i("****", "*************");
+//                Log.i("Values", cursor.getString(cursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_TODO)));
+//            }
 
         RecyclerView taskRecyclerView = (RecyclerView) findViewById(R.id.task_recyclerView);
-        TaskAdapter adapter = new TaskAdapter(this, this);
+        mTaskAdapter = new TaskAdapter(this, this);
 
         taskRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        taskRecyclerView.setAdapter(adapter);
-        adapter.swapCursor(cursor);
-        cursor.close();
+        taskRecyclerView.setAdapter(mTaskAdapter);
+        getSupportLoaderManager().initLoader(1,null,this);
         cursor2.close();
 
 
@@ -112,5 +116,29 @@ public class DefaultListActivity extends AppCompatActivity implements TaskAdapte
     public void OnTaskClick(View view) {
        int tag = (int)view.getTag();
         Toast.makeText(this, "id = "+ tag, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        if(mSelectionArgs == null){
+
+            return new CursorLoader(this, TaskContract.TaskEntry.CONTENT_URI_TASK,null,null,null,null);
+
+        }
+        else
+        {
+            return new CursorLoader(this,TaskContract.TaskEntry.CONTENT_URI_TASK, null, TaskContract.TaskEntry.COLUMN_LIST_NAME + "=?", mSelectionArgs, null);
+        }
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        mTaskAdapter.swapCursor(cursor);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mTaskAdapter.swapCursor(null);
+
     }
 }
