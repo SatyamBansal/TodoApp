@@ -1,5 +1,6 @@
 package com.example.satyam.todoapp;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
@@ -14,7 +15,7 @@ import com.example.satyam.todoapp.data.TaskContract;
  * Created by satyam on 19/3/17.
  */
 
-public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TodoViewHolder> {
+public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TodoViewHolder> implements TaskItemHelperAdapter {
 
 
     private Cursor mCursor;
@@ -22,8 +23,20 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TodoViewHolder
 
     TaskClickListener mListener;
 
+    @Override
+    public void onItemMove(int fromPosition, int toPosition) {
+
+    }
+
+    @Override
+    public void onItemDismiss(long id) {
+
+        mContext.getContentResolver().delete(ContentUris.withAppendedId(TaskContract.TaskEntry.CONTENT_URI_TASK,id),null,null);
+
+    }
+
     public interface TaskClickListener {
-        public void OnTaskClick(View itemView);
+        void OnTaskClick(View itemView);
     }
 
     public TaskAdapter(Context context, TaskClickListener listener) {
@@ -45,13 +58,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TodoViewHolder
         mCursor.moveToPosition(position);
 
         holder.todoView.setText(mCursor.getString(mCursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_TODO)));
-        holder.itemView.setTag(mCursor.getInt(mCursor.getColumnIndex(TaskContract.TaskEntry._ID)));
+        holder.itemView.setTag(mCursor.getLong(mCursor.getColumnIndex(TaskContract.TaskEntry._ID)));
 
 
     }
 
     @Override
     public int getItemCount() {
+        if(mCursor == null){
+            return 0;
+        }
         return mCursor.getCount();
     }
 

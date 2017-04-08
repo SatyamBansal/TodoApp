@@ -113,7 +113,23 @@ public class TaskProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+        int match = sUriMatcher.match(uri);
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        int rowsDeleted = -1;
+
+        switch (match){
+            case TASK_WITH_ID:
+                selection = TaskEntry._ID + "=?";
+                selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
+                rowsDeleted = db.delete(TaskEntry.TABLE_NAME,selection,selectionArgs);
+                break;
+
+            default:throw new IllegalArgumentException("Deletion is not supported for " + uri);
+
+        }
+
+        getContext().getContentResolver().notifyChange(uri,null);
+        return rowsDeleted;
     }
 
     @Override

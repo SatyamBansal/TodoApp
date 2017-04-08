@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -81,6 +82,10 @@ public class DefaultListActivity extends AppCompatActivity implements TaskAdapte
         RecyclerView taskRecyclerView = (RecyclerView) findViewById(R.id.task_recyclerView);
         mTaskAdapter = new TaskAdapter(this, this);
 
+        ItemTouchHelper.Callback callback = new TaskItemTouchHelperCallback(mTaskAdapter);
+        ItemTouchHelper helper = new ItemTouchHelper(callback);
+        helper.attachToRecyclerView(taskRecyclerView);
+
         taskRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         taskRecyclerView.setAdapter(mTaskAdapter);
         getSupportLoaderManager().initLoader(1,null,this);
@@ -114,7 +119,7 @@ public class DefaultListActivity extends AppCompatActivity implements TaskAdapte
 
     @Override
     public void OnTaskClick(View view) {
-       int tag = (int)view.getTag();
+       long tag = (long)view.getTag();
         Toast.makeText(this, "id = "+ tag, Toast.LENGTH_SHORT).show();
     }
 

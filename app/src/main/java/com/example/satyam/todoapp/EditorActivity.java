@@ -22,7 +22,6 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.example.satyam.todoapp.Utils.AlarmUtils;
 import com.example.satyam.todoapp.data.TaskContract;
 import com.example.satyam.todoapp.data.TaskContract.TaskEntry;
 
@@ -92,7 +91,7 @@ public class EditorActivity extends AppCompatActivity {
 
                 Uri uri = getContentResolver().insert(TaskEntry.CONTENT_URI_TASK, value);
                 int id = Integer.parseInt(uri.getPathSegments().get(1));
-                AlarmUtils.createAlarm(getBaseContext(), id, calendar.getTimeInMillis(), 0);
+            //    AlarmUtils.createAlarm(getBaseContext(), id, calendar.getTimeInMillis(), 0);
                 Log.i("!!!!!!!!!!!", "" + id);
 
                 finish();
