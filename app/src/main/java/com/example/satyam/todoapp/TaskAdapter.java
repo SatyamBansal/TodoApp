@@ -1,7 +1,10 @@
 package com.example.satyam.todoapp;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.satyam.todoapp.data.TaskContract;
+import com.example.satyam.todoapp.services.ReminderNotificationService;
 
 /**
  * Created by satyam on 19/3/17.
@@ -22,6 +26,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TodoViewHolder
     private Context mContext;
 
     TaskClickListener mListener;
+    static AlarmManager alarmManager;
+    PendingIntent alarmIntent;
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
@@ -30,6 +36,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TodoViewHolder
 
     @Override
     public void onItemDismiss(long id) {
+
+        Intent i = new Intent(mContext, ReminderNotificationService.class);
+        i.putExtra("id", (int)id);
+
+        alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+        alarmIntent = PendingIntent.getService(mContext,(int)id,i,PendingIntent.FLAG_NO_CREATE);
+        alarmManager.cancel(alarmIntent);
 
         mContext.getContentResolver().delete(ContentUris.withAppendedId(TaskContract.TaskEntry.CONTENT_URI_TASK,id),null,null);
 

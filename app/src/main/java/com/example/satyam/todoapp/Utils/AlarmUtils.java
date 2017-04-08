@@ -22,7 +22,7 @@ public final class AlarmUtils {
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, ReminderNotificationService.class);
         intent.putExtra("id", id);
-        alarmIntent = PendingIntent.getService(context, id, intent, 0);
+        alarmIntent = PendingIntent.getService(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 //        int minute = Integer.parseInt(time.substring(2));
 //        String h = time.substring(0,2);
