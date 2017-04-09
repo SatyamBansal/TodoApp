@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.satyam.todoapp.data.TaskContract;
 import com.example.satyam.todoapp.data.TaskDbHelper;
+import com.orhanobut.logger.Logger;
 
 public class ListActivity extends AppCompatActivity implements ListAdapter.ListClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -66,7 +67,7 @@ public class ListActivity extends AppCompatActivity implements ListAdapter.ListC
                     Uri uri = getContentResolver().insert(TaskContract.ListEntry.CONTENT_URI_LIST, values);
 //                db.insert(TaskContract.ListEntry.TABLE_NAME,null,values);
 
-                    Log.i("ListActivity", uri.toString());
+                    Logger.d(uri.toString());
 //                mAdapter.swapCursor(db.rawQuery("SELECT * FROM  " + TaskContract.ListEntry.TABLE_NAME,null));
                 }
                 else {

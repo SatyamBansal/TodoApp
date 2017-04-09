@@ -15,7 +15,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.satyam.todoapp.data.TaskContract;
 import com.example.satyam.todoapp.data.TaskDbHelper;
+import com.orhanobut.logger.Logger;
 
 public class DefaultListActivity extends AppCompatActivity implements TaskAdapter.TaskClickListener , LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -63,8 +63,9 @@ public class DefaultListActivity extends AppCompatActivity implements TaskAdapte
 //        }
 
         mSelectionArgs = new String[]{getIntent().getStringExtra("listName")};
+        Logger.d(mSelectionArgs);
 
-        Log.i("DefaulActivity.java", mSelectionArgs[0]);
+        //  Log.i("DefaulActivity.java", mSelectionArgs[0]);
 
 //        Cursor cursor = getContentResolver().query(TaskContract.TaskEntry.CONTENT_URI_TASK, null, TaskContract.TaskEntry.COLUMN_LIST_NAME + "=?", selectionArgs, null);
 
@@ -125,13 +126,17 @@ public class DefaultListActivity extends AppCompatActivity implements TaskAdapte
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        if(mSelectionArgs == null){
+
+        Logger.d("here");
+
+        if (getIntent().getStringExtra("listName") == null) {
 
             return new CursorLoader(this, TaskContract.TaskEntry.CONTENT_URI_TASK,null,null,null,null);
 
         }
         else
         {
+            Logger.d("inside not null");
             return new CursorLoader(this,TaskContract.TaskEntry.CONTENT_URI_TASK, null, TaskContract.TaskEntry.COLUMN_LIST_NAME + "=?", mSelectionArgs, null);
         }
     }

@@ -42,6 +42,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TodoViewHolder
 
         alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
         alarmIntent = PendingIntent.getService(mContext,(int)id,i,PendingIntent.FLAG_NO_CREATE);
+        if (alarmIntent != null)
         alarmManager.cancel(alarmIntent);
 
         mContext.getContentResolver().delete(ContentUris.withAppendedId(TaskContract.TaskEntry.CONTENT_URI_TASK,id),null,null);
