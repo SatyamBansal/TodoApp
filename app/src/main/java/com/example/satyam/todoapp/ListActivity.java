@@ -14,7 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -86,7 +85,7 @@ public class ListActivity extends AppCompatActivity implements ListAdapter.ListC
     public void onListClick(String listName) {
 
         Intent intent = new Intent(ListActivity.this, DefaultListActivity.class);
-        Log.i("**********", listName);
+        Logger.d(listName);
         intent.putExtra(INTENT_LIST_NAME, listName);
         startActivity(intent);
     }
