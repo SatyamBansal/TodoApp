@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.satyam.todoapp.data.TaskContract;
 import com.example.satyam.todoapp.data.TaskDbHelper;
@@ -56,14 +57,21 @@ public class ListActivity extends AppCompatActivity implements ListAdapter.ListC
                 SQLiteDatabase db = mDBhelper.getWritableDatabase();
 
                 String listName = editText.getText().toString().trim();
-                ContentValues values = new ContentValues();
-                values.put(TaskContract.ListEntry.COLUMN_LISTS, listName);
 
-                Uri uri = getContentResolver().insert(TaskContract.ListEntry.CONTENT_URI_LIST, values);
+//              To avoid empty list names
+                if(!listName.equals("")) {
+                    ContentValues values = new ContentValues();
+                    values.put(TaskContract.ListEntry.COLUMN_LISTS, listName);
+
+                    Uri uri = getContentResolver().insert(TaskContract.ListEntry.CONTENT_URI_LIST, values);
 //                db.insert(TaskContract.ListEntry.TABLE_NAME,null,values);
-                Log.i("ListActivity", uri.toString());
-//                mAdapter.swapCursor(db.rawQuery("SELECT * FROM  " + TaskContract.ListEntry.TABLE_NAME,null));
 
+                    Log.i("ListActivity", uri.toString());
+//                mAdapter.swapCursor(db.rawQuery("SELECT * FROM  " + TaskContract.ListEntry.TABLE_NAME,null));
+                }
+                else {
+                    Toast.makeText(ListActivity.this, "Enter list name", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
